@@ -167,9 +167,15 @@ function runCommandElevated(cmd, wait) {
 
 function runSysprepAction() {
     try {
-        // Make sure that the service doesn't start before the setup ends
-        cmd = "\"" + Session.Property("BINFOLDER") + "\\SetSetupComplete.cmd\"";
-        runCommandElevated(cmd, true);
+        var delayedStartService = parseInt(Session.Property("SERVICE_STARTUP_TYPE_DELAYED_START"));
+        if (!delayedStartService) {
+            // Make sure that the service doesn't start before the setup ends
+            cmd = "\"" + Session.Property("BINFOLDER") + "\\SetSetupComplete.cmd\"";
+            runCommandElevated(cmd, true);
+        } else {
+            runCommandElevated("sc config cloudbase-init start= delayed-auto ", true);
+            logMessage("Cloudbase-Init service is set to delayed start.");
+        }
 
         cmd = "\"%SystemRoot%\\System32\\Sysprep\\sysprep.exe\" /generalize /oobe";
 

@@ -51,6 +51,7 @@
     -->
     <Property Id="SERVICE_USER_RIGHTS" Value="SeAssignPrimaryTokenPrivilege" />
     <Property Id="RUN_SERVICE_AS_LOCAL_SYSTEM" />
+    <Property Id="SERVICE_STARTUP_TYPE_DELAYED_START" Value="0"/>
 
     <UIRef Id="MyWixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
