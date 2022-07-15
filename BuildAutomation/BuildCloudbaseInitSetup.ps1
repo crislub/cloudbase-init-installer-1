@@ -13,8 +13,8 @@ Param(
   [switch]$CreateZip=$true,
   [switch]$SetVCEnvVars=$true,
   [switch]$RelativePythonDirPath,
-  [string]$VSPlatformToolSet="v120_xp",
-  [string]$WixPlatformToolSet="VS2013"
+  [string]$VSPlatformToolSet="v141",
+  [string]$WixPlatformToolSet="VS2019"
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,12 +22,11 @@ $ErrorActionPreference = "Stop"
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 
-if ($SetVCEnvVars) {
-    SetVCVars
-}
+SetVCVars "2019" "x86_amd64"
+
 
 # Use v140 with GitHub workflows env
-#ReplaceVSToolSet $VSPlatformToolSet
+ReplaceVSToolSet $VSPlatformToolSet
 # Use VS2015 with GitHub workflows env
 #Replace-WixToolSet $WixPlatformToolSet
 
@@ -86,6 +85,8 @@ try
     $python_template_dir = join-path $cloudbaseInitInstallerDir "Python$($pythonversion.replace('.', ''))_${platform}_Template"
 
     CheckCopyDir $python_template_dir $python_dir
+    
+    ls "${python_dir}"
 
     # Make sure that we don't have temp files from a previous build
     $python_build_path = "$ENV:LOCALAPPDATA\Temp\pip_build_$ENV:USERNAME"
@@ -96,7 +97,7 @@ try
     ExecRetry { PipInstall "pip" -update $true }
     ExecRetry { PipInstall "wheel" -update $true }
 
-    ExecRetry { PullInstall "requirements" "https://github.com/openstack/requirements" }
+    ExecRetry { PullInstall "requirements" "https://github.com/openstack/requirements" "stable/victoria"}
     $upper_constraints_file = $(Resolve-Path ".\requirements\upper-constraints.txt").Path
     $env:PIP_CONSTRAINT = $upper_constraints_file
     $env:PIP_NO_BINARIES = "cloudbase-init"
@@ -169,12 +170,13 @@ try
     }
 
     cd $cloudbaseInitInstallerDir
-
+    
     & msbuild.exe CloudbaseInitSetup.sln /m /p:Platform=$platform /p:Configuration=`"Release`"  /p:DefineConstants=`"PythonSourcePath=$python_dir`;CarbonSourcePath=Carbon`;Version=$msi_version`;VersionStr=$version`"
     if ($LastExitCode) { throw "MSBuild failed" }
 
     $msi_path = join-path $cloudbaseInitInstallerDir "CloudbaseInitSetup\bin\Release\$platform\CloudbaseInitSetup.msi"
     $msi_path_pdb_path = join-path $cloudbaseInitInstallerDir "CloudbaseInitSetup\bin\Release\$platform\CloudbaseInitSetup.wixpdb"
+
     Write-Host ("Cloudbaseinit MSI path is ${0}" -f $msi_path)
     Remove-Item -Path $msi_path_pdb_path -Force -ErrorAction SilentlyContinue
 
