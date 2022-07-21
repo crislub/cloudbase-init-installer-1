@@ -9,7 +9,7 @@ jobs:
     strategy:
       max-parallel: 100
       matrix:
-        cbsinit_repo: ['https://github.com/crislub/cloudbase-init-1']
+        cbsinit_repo: ['https://github.com/crislub/cloudbase-init']
         cbsinit_branch: ['feature-add-vmware-network']
 
     steps:
