@@ -10,7 +10,7 @@ jobs:
       max-parallel: 100
       matrix:
         cbsinit_repo: ['https://github.com/crislub/cloudbase-init']
-        cbsinit_branch: ['feature-add-vmware-network']
+        cbsinit_branch: ['network-configuration']
 
     steps:
     - uses: actions/checkout@v1
