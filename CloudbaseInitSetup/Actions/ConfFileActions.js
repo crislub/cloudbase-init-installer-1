@@ -45,9 +45,9 @@ function writeCloudbaseInitConfFileAction() {
         var bsdtarPath = binFolder + "bsdtar.exe";
 
         var config = {
-            "username": trim(userName),
-            "groups": trim(userGroups),
-            "inject_user_password": checkBoxValueToBool(injectMetadataPassword),
+            // "username": trim(userName),
+            // "groups": trim(userGroups),
+            // "inject_user_password": checkBoxValueToBool(injectMetadataPassword),
             "config_drive_raw_hhd": "true",
             "config_drive_cdrom": "true",
             "config_drive_vfat": "true",
@@ -78,12 +78,12 @@ function writeCloudbaseInitConfFileAction() {
         var cloudbaseInitConfFileUnattend = cloudbaseInitConfFolder + "cloudbase-init-unattend.conf";
 
         if (!maasMetadataUrl) {
-            config["metadata_services"] = "cloudbaseinit.metadata.services.configdrive.ConfigDriveService,cloudbaseinit.metadata.services.httpservice.HttpService,cloudbaseinit.metadata.services.ec2service.EC2Service,cloudbaseinit.metadata.services.maasservice.MaaSHttpService";
+            config["metadata_services"] = "cloudbaseinit.metadata.services.vmwareguestinfoservice";
         }
 
         config["plugins"] = "cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin";
         config["allow_reboot"] = false;
-        config["stop_service_on_exit"] = false;
+        config["stop_service_on_exit"] = true;
         config["log_file"] = "cloudbase-init-unattend.log";
         config["check_latest_version"] = false;
 
