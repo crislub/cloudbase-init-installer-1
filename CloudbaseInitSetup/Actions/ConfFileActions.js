@@ -62,7 +62,7 @@ function writeCloudbaseInitConfFileAction() {
             "mtu_use_dhcp_config": true,
             "ntp_use_dhcp_config": true,
             "local_scripts_path": localScriptsFolder,
-            "metadata_services": "cloudbaseinit.metadata.services.vmwareguestinfoservice"
+            "metadata_services": "cloudbaseinit.metadata.services.vmwareguestinfoservice.VMwareGuestInfoService"
         };
 
         if (maasMetadataUrl) {
@@ -79,7 +79,7 @@ function writeCloudbaseInitConfFileAction() {
         var cloudbaseInitConfFileUnattend = cloudbaseInitConfFolder + "cloudbase-init-unattend.conf";
 
         if (!maasMetadataUrl) {
-            config["metadata_services"] = "cloudbaseinit.metadata.services.vmwareguestinfoservice";
+            config["metadata_services"] = "cloudbaseinit.metadata.services.vmwareguestinfoservice.VMwareGuestInfoService";
         }
 
         config["plugins"] = "cloudbaseinit.plugins.common.mtu.MTUPlugin,cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin,cloudbaseinit.plugins.windows.extendvolumes.ExtendVolumesPlugin";
