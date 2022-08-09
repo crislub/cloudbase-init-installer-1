@@ -11,6 +11,7 @@ jobs:
       matrix:
         cbsinit_repo: ['https://github.com/crislub/cloudbase-init-1']
         cbsinit_branch: ['feature-remove-mac']
+        cbsinit_name: ['conf-network']
 
     steps:
     - uses: actions/checkout@v1
@@ -21,6 +22,17 @@ jobs:
         Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/p/?LinkId=323507 -OutFile sdksetup.exe -UseBasicParsing
         Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
       shell: powershell
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ github.ref }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+        prerelease: false
     - name: Build msi
       shell: cmd
       run: 
@@ -28,7 +40,16 @@ jobs:
             -ClonePullInstallerRepo:$false -CreateZip:$false ^ 
             -SetVCEnvVars:$true -RelativePythonDirPath:$true ^
             -CloudbaseInitRepoUrl ${{ matrix.cbsinit_repo }} -CloudbaseInitRepoBranch ${{ matrix.cbsinit_branch }}
-    - uses: actions/upload-artifact@v1
-      with:
-        name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_branch }}"
-        path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
+  - name: upload msi artifact
+    uses: actions/upload-release-asset@v2
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    with:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      asset_path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
+      asset_name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_name }}"
+      asset_content_type: application/msi
+    # - uses: actions/upload-artifact@v1
+    #   with:
+    #     name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_branch }}"
+    #     path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
