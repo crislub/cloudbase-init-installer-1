@@ -40,16 +40,13 @@ jobs:
             -ClonePullInstallerRepo:$false -CreateZip:$false ^ 
             -SetVCEnvVars:$true -RelativePythonDirPath:$true ^
             -CloudbaseInitRepoUrl ${{ matrix.cbsinit_repo }} -CloudbaseInitRepoBranch ${{ matrix.cbsinit_branch }}
-  - name: upload msi artifact
-    uses: actions/upload-release-asset@v2
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
-    with:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      asset_path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
-      asset_name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_name }}"
-      asset_content_type: application/msi
-    # - uses: actions/upload-artifact@v1
-    #   with:
-    #     name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_branch }}"
-    #     path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
+    - name: upload msi artifact
+      uses: actions/upload-release-asset@v2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: 'CloudbaseInitSetup/bin/release/x64/CloudbaseInitSetup.msi'
+        asset_name: "CloudbaseInit_x64_MSI_${{ matrix.cbsinit_name }}"
+        asset_content_type: application/msi
+
